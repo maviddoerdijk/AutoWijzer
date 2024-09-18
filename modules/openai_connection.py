@@ -3,6 +3,7 @@ from openai import OpenAI
 import json
 import os
 from dotenv import load_dotenv
+import streamlit as st
 load_dotenv()
 
 
@@ -34,7 +35,7 @@ def get_car_from_prompt(user_data, return_mock_data=False):
         }
         
     # Initialize OpenAI client
-    client = OpenAI()
+    client = OpenAI(api_key = st.secrets["OPENAI_API_KEY"])
 
     # Construct the prompt for the OpenAI API
     prompt = f"""

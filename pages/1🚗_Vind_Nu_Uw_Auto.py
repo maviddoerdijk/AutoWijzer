@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 from modules.openai_connection import get_car_from_prompt
 load_dotenv()
 
-os.environ['OPENAI_API_KEY'] = st.secrets["OPENAI_API_KEY"]
 
 def render_page():
     # Initialize session state to track the current step
