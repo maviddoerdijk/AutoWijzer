@@ -1,5 +1,10 @@
 import streamlit as st
 import time
+from dotenv import load_dotenv
+from modules.openai_connection import get_car_from_prompt
+load_dotenv()
+
+os.environ['OPENAI_API_KEY'] = st.secrets["OPENAI_API_KEY"]
 
 def render_page():
     # Initialize session state to track the current step
@@ -28,6 +33,12 @@ def render_page():
 
     # Display questions one by one based on the current step
     if st.session_state.current_step == 0:
+        # Check if user wants to use mock data
+        st.subheader("Gebruik mock data voor de resultaten?")
+        use_mock_data = st.radio("Wilt u mock data gebruiken voor de resultaten?", ["Ja", "Nee"])
+        # save to session state
+        st.session_state['use_mock_data'] = use_mock_data == "Ja"
+        
         # Vraag 1: Uw budget
         st.subheader("1. Wat is uw budget?")
         budget_type = st.selectbox("Wilt u betalen per maand of in één keer (cash)?", ["Maandelijks", "Cash"])
@@ -114,7 +125,7 @@ def render_result_page():
     st.subheader("🎉 Gefeliciteerd! We hebben de perfecte auto voor u gevonden!")
     
     # Mock OpenAI functie aanroepen om een auto te vinden
-    car = get_car_from_prompt(st.session_state.user_data)
+    car = get_car_from_prompt(st.session_state.user_data, return_mock_data=st.session_state.get('use_mock_data', False))
     
     # Auto afbeelding en details weergeven
     st.image(car['image'], caption=car['name'], use_column_width=True)
@@ -144,20 +155,6 @@ def render_result_page():
             time.sleep(2)  # Simuleert het verzenden
             st.success("Succes! Uw mail is verzonden.")
 
-
-
-# Mock functie die een auto teruggeeft op basis van antwoorden
-def get_car_from_prompt(user_data):
-    return {
-        "name": "Tesla Model 3",
-        "price": "€ 45.000",
-        "image": "car.png",  # Mock image URL
-        "dealers": [
-            {"name": "Autodealer 1", "link": "https://example.com/dealer1"},
-            {"name": "Autodealer 2", "link": "https://example.com/dealer2"},
-            {"name": "Autodealer 3", "link": "https://example.com/dealer3"}
-        ]
-    }
 
 if __name__ == "__main__":
     render_page()
