@@ -1,7 +1,10 @@
+from PIL import Image
+from io import BytesIO
+import base64
 import streamlit as st
 import time
 from dotenv import load_dotenv
-from modules.openai_connection import get_car_from_prompt
+from modules.actions import get_car_data
 load_dotenv()
 
 
@@ -32,11 +35,7 @@ def render_page():
 
     # Display questions one by one based on the current step
     if st.session_state.current_step == 0:
-        # Check if user wants to use mock data
-        st.subheader("Gebruik mock data voor de resultaten?")
-        use_mock_data = st.radio("Wilt u mock data gebruiken voor de resultaten?", ["Ja", "Nee"])
-        # save to session state
-        st.session_state['use_mock_data'] = use_mock_data == "Ja"
+        st.session_state['use_mock_data'] = False
         
         # Vraag 1: Uw budget
         st.subheader("1. Wat is uw budget?")
@@ -81,6 +80,9 @@ def render_page():
         elif fuel_type == "Benzine":
             fuel_tank_size = st.slider("Gewenste tankinhoud (L)", min_value=30, max_value=100, step=5)
             st.session_state.user_data['fuel_tank_size'] = fuel_tank_size
+        elif fuel_type == "Hybride":
+            fuel_tank_size = st.slider("Gewenste tankinhoud (L)", min_value=30, max_value=100, step=5)
+            st.session_state.user_data['fuel_tank_size'] = fuel_tank_size
 
     elif st.session_state.current_step == 4:
         # Vraag 5: Inhoud van de kofferbak
@@ -123,18 +125,19 @@ def render_page():
 def render_result_page():
     st.subheader("🎉 Gefeliciteerd! We hebben de perfecte auto voor u gevonden!")
     
-    # Mock OpenAI functie aanroepen om een auto te vinden
-    car = get_car_from_prompt(st.session_state.user_data, return_mock_data=st.session_state.get('use_mock_data', False))
+    # OpenAI functie aanroepen om een auto te vinden
+    car_data = get_car_data(st.session_state.user_data)
     
-    # Auto afbeelding en details weergeven
-    st.image(car['image'], caption=car['name'], use_column_width=True)
+    # Show Car image base64 encoded
+    aux_image = Image.open(BytesIO(base64.b64decode(car_data['image'])))
+    st.image(aux_image, caption=car_data['name'], use_column_width=True)
     
     # Prijs in grote, opvallende stijl
-    st.metric(label="Prijs", value=f"💶 {car['price']}")
+    st.metric(label="Prijs", value=f"💶 {car_data['price']}")
     
     # Aanbieders weergeven in mooi opgemaakte kaarten
     st.write("Aanbieders:")
-    for dealer in car['dealers']:
+    for dealer in car_data['dealers']:
         st.markdown(
             f"""
             <div style='border: 1px solid #ddd; padding: 10px; border-radius: 10px; margin-bottom: 10px;'>

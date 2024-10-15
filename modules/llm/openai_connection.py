@@ -1,4 +1,3 @@
-from pydantic import BaseModel
 from openai import OpenAI
 import json
 import os
@@ -7,16 +6,6 @@ import streamlit as st
 load_dotenv()
 
 
-# Define the Pydantic model for the car information
-class Dealer(BaseModel):
-    name: str
-    link: str
-
-class CarInfo(BaseModel):
-    name: str
-    price: str
-    image: str
-    dealers: list[Dealer]
 
 
 
@@ -77,16 +66,3 @@ def get_car_from_prompt(user_data, return_mock_data=False):
     result = completion.choices[0].message.content
     # return as dict
     return json.loads(result)
-
-
-if __name__ == "__main__":
-    mock_user_data = {
-        "budget": {"type": "Maandelijks", "min": 300, "max": 600},
-        "fuel_type": "Elektrisch",
-        "battery_range": 400,
-        "fast_charging": "Ja",
-        "suitcase_count": "3 koffers (360 liter)",
-        "circumstance": "Milieubewuste rijder"
-    }
-    car_info = get_car_prompt(user_data=mock_user_data)
-    print(car_info)

@@ -26,6 +26,11 @@ Below is a list of features that are to be implemented. This list is updated reg
 
 - Links to actual car sites
 - Updated results page including simple-to-read statistics on the car
+- Results for best car(s) summarized in a document
+
+### (boring!) backend features
+
+- Pydantic integration
 
 ## Contact
 
