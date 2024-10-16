@@ -1,4 +1,6 @@
 python-dotenv
-openai
-pydantic
+openai==1.51.2
+pydantic==2.9
 beautifulsoup4
+bing-image-downloader
+pydantic
