@@ -2,6 +2,8 @@
 
 Autowijzer; De snelste route naar uw nieuwe auto.
 
+![alt text](image-1.png)
+
 [Visit](https://autowijzer.streamlit.app/)
 
 _Huidige stage: project_
